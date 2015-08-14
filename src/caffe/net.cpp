@@ -92,6 +92,7 @@ void Net<Dtype>::Init(const NetParameter& in_param) {
     }
     // Setup layer.
     const LayerParameter& layer_param = param.layer(layer_id);
+    
     if (layer_param.propagate_down_size() > 0) {
       CHECK_EQ(layer_param.propagate_down_size(),
           layer_param.bottom_size())
@@ -104,7 +105,9 @@ void Net<Dtype>::Init(const NetParameter& in_param) {
       layers_[layer_id]->SetShared(true);
     } else {
       layers_.push_back(LayerRegistry<Dtype>::CreateLayer(layer_param));
+      layers_[layer_id]->set_net(this);
     }
+
     layer_names_.push_back(layer_param.name());
     if (Caffe::root_solver()) {
       LOG(INFO) << "Creating Layer " << layer_param.name();
